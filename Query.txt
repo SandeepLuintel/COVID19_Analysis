@@ -1,0 +1,38 @@
+
+--Calculating the population of Continents
+	
+	select continent, max(population) as Total_Pop
+	from CovidDeaths
+	where continent is not null
+	group by continent
+	order by 2 desc
+
+--Calculating Average of Continent Population, Total Cases, Total Deaths and Total Tests
+
+	select continent, avg(population) as AvgContPop, 
+	avg (distinct total_cases) as AvgTotalCases,
+	avg (distinct total_deaths) as AvgTotalDeaths,
+	avg (distinct total_tests) as AvgTotalTests
+	from coviddeaths
+	where continent in ('Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania')
+	group by continent
+
+
+--Using CTE to perform calculation
+	
+	With table1 as 
+		(select continent, avg(population) as AvgContPop, 
+		avg (distinct total_cases) as AvgTotalCases,
+		avg (distinct total_deaths) as AvgTotalDeaths,
+		avg (distinct total_tests) as AvgTotalTests
+		from coviddeaths
+		where continent in ('Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania')
+		group by continent)
+	select continent,concat(round((AvgTotalCases/AvgContPop)*100,4),'%') as Avg_Total_Case_in_Pop,
+		concat(round((AvgTotalDeaths/AvgContPop)*100,4),'%') as Avg_Total_Death_in_Pop,
+		concat(round((AvgTotalTests/AvgContPop)*100,4),'%') as Avg_Total_Test_in_Pop,
+		concat(round((AvgTotalDeaths/AvgTotalCases)*100,4),'%') as Avg_Total_Death_in_Cases
+	from table1
+
+
+
